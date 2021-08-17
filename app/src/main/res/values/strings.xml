@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">Kotlin Base Template</string>
+    <string name="app_name">News</string>
+    <string name="app_claim">This is an app that allows you to stay informed about the news in the world.</string>
 </resources>

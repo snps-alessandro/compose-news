@@ -18,5 +18,6 @@ refreshVersions {
     }
     enableBuildSrcLibs()
 }
-rootProject.name = "Kotlin Base Template"
+rootProject.name = "Compose News"
 include(":app")
+include(":sharelibs")

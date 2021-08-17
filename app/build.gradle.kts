@@ -4,6 +4,7 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
+    id("dagger.hilt.android.plugin")
 }
 
 android {
@@ -66,8 +67,6 @@ android {
         resources.excludes.add("/META-INF/LGPL2.1")
     }
 
-    // dynamicFeatures = mutableSetOf()
-
     sourceSets {
         getByName("staging") {
             java {
@@ -85,6 +84,7 @@ android {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
+    implementation(project(":sharelibs"))
     // AndroidX
     implementation(Libs.appcompat)
     implementation(Libs.ui)
@@ -93,12 +93,16 @@ dependencies {
     implementation(Libs.androidx_compose_material_material)
     implementation(Libs.material_icons_extended)
     implementation(Libs.material_icons_core)
+    implementation(Libs.activity_compose)
+    implementation(Libs.lifecycle_viewmodel_compose)
     implementation(Libs.runtime_livedata)
     implementation(Libs.ui_test_junit4)
     implementation(Libs.camera_camera2)
 
     // Google
     implementation(Libs.com_google_android_material_material)
+    implementation(Libs.hilt_android)
+    kapt(Libs.hilt_android_compiler)
 
     // Timber
     implementation(Libs.timber)
@@ -113,4 +117,8 @@ dependencies {
     androidTestImplementation(Libs.androidx_test_rules)
     androidTestImplementation(Libs.espresso_core)
     androidTestImplementation(Libs.espresso_contrib)
+}
+
+kapt {
+    correctErrorTypes = true
 }

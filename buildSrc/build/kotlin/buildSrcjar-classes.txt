@@ -1,1 +1,0 @@
-D:\Sinapsi\0_Workspace\AndroidWS\compose-news\buildSrc\build\classes\kotlin\main\Libs.class;D:\Sinapsi\0_Workspace\AndroidWS\compose-news\buildSrc\build\classes\kotlin\main\Versions.class

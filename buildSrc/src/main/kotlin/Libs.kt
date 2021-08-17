@@ -29,6 +29,10 @@ object Libs {
     const val material_icons_extended: String =
             "androidx.compose.material:material-icons-extended:_"
 
+    const val activity_compose: String = "androidx.activity:activity-compose:_"
+
+    const val lifecycle_viewmodel_compose = "androidx.lifecycle:lifecycle-viewmodel-compose:_"
+
     const val runtime_livedata: String = "androidx.compose.runtime:runtime-livedata:_"
 
     const val ui: String = "androidx.compose.ui:ui:_"
@@ -57,6 +61,12 @@ object Libs {
 
     const val com_google_android_material_material: String =
             "com.google.android.material:material:_"
+
+    const val hilt_android_gradle_plugin: String = "com.google.dagger:hilt-android-gradle-plugin:_"
+
+    const val hilt_android: String = "com.google.dagger:hilt-android:_"
+
+    const val hilt_android_compiler: String = "com.google.dagger:hilt-android-compiler:_"
 
     const val google_services: String = "com.google.gms:google-services:_"
 
