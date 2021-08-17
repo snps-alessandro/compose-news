@@ -1,3 +1,5 @@
+import de.fayard.refreshVersions.core.versionFor
+
 plugins {
     id("com.android.application")
     kotlin("android")
@@ -5,14 +7,14 @@ plugins {
 }
 
 android {
-    compileSdkVersion(Versions.compileSdk)
-    buildToolsVersion(Versions.buildTools)
+    compileSdk = Versions.compileSdk
+    buildToolsVersion = Versions.buildTools
 
     defaultConfig {
         applicationId = Versions.applicationID
 
-        minSdkVersion(Versions.minSdk)
-        targetSdkVersion(Versions.targetSdk)
+        minSdk = Versions.minSdk
+        targetSdk = Versions.targetSdk
 
         versionCode = Versions.versionCode
         versionName = Versions.versionName
@@ -43,7 +45,6 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
-        useIR = true
     }
 
     buildFeatures {
@@ -57,13 +58,12 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.AndroidX.Compose.compose
-        kotlinCompilerVersion = Versions.Kotlin.kotlin
+        kotlinCompilerExtensionVersion = versionFor(AndroidX.compose.ui)
     }
 
     packagingOptions {
-        excludes.add("/META-INF/AL2.0")
-        excludes.add("/META-INF/LGPL2.1")
+        resources.excludes.add("/META-INF/AL2.0")
+        resources.excludes.add("/META-INF/LGPL2.1")
     }
 
     // dynamicFeatures = mutableSetOf()
@@ -76,7 +76,7 @@ android {
         }
     }
 
-    lintOptions {
+    lint {
         isWarningsAsErrors = true
         isAbortOnError = true
     }
@@ -85,29 +85,32 @@ android {
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
-    implementation(Libs.AndroidX.appcompat)
-    implementation(Libs.AndroidX.Compose.ui)
-    implementation(Libs.AndroidX.Compose.tooling)
-    implementation(Libs.AndroidX.Compose.foundation)
-    implementation(Libs.AndroidX.Compose.material)
-    implementation(Libs.AndroidX.Compose.iconExtended)
-    implementation(Libs.AndroidX.Compose.icon)
-    implementation(Libs.AndroidX.Compose.livedata)
-    implementation(Libs.AndroidX.Compose.test)
-    api(Libs.AndroidX.CameraX.cameraX)
+    // AndroidX
+    implementation(Libs.appcompat)
+    implementation(Libs.ui)
+    implementation(Libs.ui_tooling)
+    implementation(Libs.foundation)
+    implementation(Libs.androidx_compose_material_material)
+    implementation(Libs.material_icons_extended)
+    implementation(Libs.material_icons_core)
+    implementation(Libs.runtime_livedata)
+    implementation(Libs.ui_test_junit4)
+    implementation(Libs.camera_camera2)
 
-    implementation(Libs.Google.material)
+    // Google
+    implementation(Libs.com_google_android_material_material)
 
-    implementation(Libs.Timber.timber)
+    // Timber
+    implementation(Libs.timber)
 
-    testImplementation(Libs.Test.jUnit)
-    testImplementation(Libs.Test.mockito)
-    testImplementation(Libs.Google.truth)
-    testImplementation(Libs.AndroidX.Test.testing)
-    implementation(Libs.AndroidX.Test.intents)
-    androidTestImplementation(Libs.AndroidX.Test.jUnitExt)
-    androidTestImplementation(Libs.AndroidX.Test.runner)
-    androidTestImplementation(Libs.AndroidX.Test.rules)
-    androidTestImplementation(Libs.AndroidX.Test.espresso)
-    androidTestImplementation(Libs.AndroidX.Test.espressoContrib)
+    testImplementation(Libs.junit_junit)
+    testImplementation(Libs.mockito_core)
+    testImplementation(Libs.truth)
+    testImplementation(Libs.core_testing)
+    implementation(Libs.espresso_idling_resource)
+    androidTestImplementation(Libs.androidx_test_ext_junit)
+    androidTestImplementation(Libs.androidx_test_runner)
+    androidTestImplementation(Libs.androidx_test_rules)
+    androidTestImplementation(Libs.espresso_core)
+    androidTestImplementation(Libs.espresso_contrib)
 }

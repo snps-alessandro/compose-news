@@ -1,27 +1,27 @@
+import de.fayard.refreshVersions.core.versionFor
+
 plugins {
-    id("org.jlleitschuh.gradle.ktlint") version Versions.KTlint.plugin
-    id("io.gitlab.arturbosch.detekt") version Versions.Detekt.detekt
+    id("org.jlleitschuh.gradle.ktlint")
+    id("io.gitlab.arturbosch.detekt")
 }
 
 buildscript {
 
     repositories {
-        jcenter()
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:${Versions.gradle}")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.Kotlin.kotlin}")
-        classpath("com.google.gms:google-services:${Versions.Google.services}")
+        classpath(Libs.com_android_tools_build_gradle)
+        classpath(Libs.kotlin_gradle_plugin)
+        classpath(Libs.google_services)
     }
 }
 
 allprojects {
     repositories {
         google()
-        jcenter()
         mavenCentral()
     }
 }
@@ -34,7 +34,7 @@ subprojects {
 
     ktlint {
         debug.set(false)
-        version.set(Versions.KTlint.ktlint)
+        version.set(versionFor(Libs.ktlint))
         verbose.set(true)
         android.set(false)
         outputToConsole.set(true)
