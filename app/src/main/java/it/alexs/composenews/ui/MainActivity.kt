@@ -5,7 +5,6 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.GridCells
@@ -14,7 +13,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Button
 import androidx.compose.material.Scaffold
+import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -34,33 +35,49 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             NewsTheme {
-                NewsMainScreen(titleTopBar = stringResource(id = R.string.app_name)) {
-                    NewsMainScreenContent()
-                }
+                NewsMainScreen()
             }
         }
     }
 }
 
+@ExperimentalFoundationApi
 @Composable
 fun NewsMainScreen(
-    titleTopBar: String,
-    content: @Composable ((PaddingValues) -> Unit)
+    mainViewModel: MainViewModel = viewModel(),
+    scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
-    Scaffold(
-        topBar = { NewsToolbar(titleTopBar) },
-        content = content
-    )
+    val categoriesState = mainViewModel.categories.observeAsState(listOf())
+
+    NewsMainScreenContent(categories = categoriesState.value, scaffoldState = scaffoldState)
 }
+
 @ExperimentalFoundationApi
 @Composable
 private fun NewsMainScreenContent(
+    categories: List<String>,
     modifier: Modifier = Modifier,
-    mainViewModel: MainViewModel = viewModel()
+    scaffoldState: ScaffoldState
 ) {
 
-    val categoriesState = mainViewModel.categories.observeAsState(listOf())
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = { NewsToolbar(title = stringResource(id = R.string.app_name)) },
+        content = { innerPadding ->
+            LoadingContent(
+                modifier.padding(innerPadding),
+                categories
+            )
+        }
+    )
+}
 
+@ExperimentalFoundationApi
+@Composable
+private fun LoadingContent(
+    modifier: Modifier,
+    categories: List<String>
+) {
     Column(
         modifier = modifier
             .padding(8.dp)
@@ -79,11 +96,12 @@ private fun NewsMainScreenContent(
         )
 
         val listState = rememberLazyListState()
+
         LazyVerticalGrid(
-            cells = GridCells.Adaptive(minSize = 128.dp),
-            state = listState
+            state = listState,
+            cells = GridCells.Adaptive(128.dp)
         ) {
-            items(categoriesState.value) { category ->
+            items(categories) { category ->
                 CategoryItem(category, { })
             }
         }
@@ -101,5 +119,17 @@ fun CategoryItem(
         modifier = modifier.padding(4.dp)
     ) {
         Text(text = category)
+    }
+}
+
+@ExperimentalFoundationApi
+@Preview
+@Composable
+fun MainScreenPreview() {
+    NewsTheme {
+        NewsMainScreenContent(
+            categories = listOf("Politica", "Sport", "Natura"),
+            scaffoldState = rememberScaffoldState()
+        )
     }
 }
