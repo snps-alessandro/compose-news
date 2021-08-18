@@ -3,6 +3,7 @@ package it.alexs.composenews.ui
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,11 +24,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
+import it.alexs.article.ui.ArticleScreen
 import it.alexs.composenews.R
-import it.alexs.composenews.ui.theme.NewsTheme
+import it.alexs.sharelibs.theme.NewsTheme
 import it.alexs.composenews.ui.utils.NewsToolbar
+import it.alexs.sharelibs.Screen
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
 
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +45,25 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             NewsTheme {
-                NewsMainScreen()
+
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = Screen.Home.id.route
+                ) {
+                    composable(route = Screen.Home.id.route) {
+                        NewsMainScreen(navController)
+                    }
+
+                    composable(route = Screen.Article.id.route) { navBackStackEntry ->
+                        val category = navBackStackEntry.arguments?.getString("category")
+
+                        requireNotNull(category) { "category parameter wasn't found." }
+
+                        ArticleScreen(navController = navController, category = category)
+                    }
+                }
+
             }
         }
     }
@@ -44,12 +72,17 @@ class MainActivity : AppCompatActivity() {
 @ExperimentalFoundationApi
 @Composable
 fun NewsMainScreen(
+    navController: NavController,
     mainViewModel: MainViewModel = viewModel(),
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
     val categoriesState = mainViewModel.categories.observeAsState(listOf())
 
-    NewsMainScreenContent(categories = categoriesState.value, scaffoldState = scaffoldState)
+    NewsMainScreenContent(
+        categories = categoriesState.value,
+        scaffoldState = scaffoldState,
+        navController = navController
+    )
 }
 
 @ExperimentalFoundationApi
@@ -57,7 +90,8 @@ fun NewsMainScreen(
 private fun NewsMainScreenContent(
     categories: List<String>,
     modifier: Modifier = Modifier,
-    scaffoldState: ScaffoldState
+    scaffoldState: ScaffoldState,
+    navController: NavController
 ) {
 
     Scaffold(
@@ -66,7 +100,8 @@ private fun NewsMainScreenContent(
         content = { innerPadding ->
             LoadingContent(
                 modifier.padding(innerPadding),
-                categories
+                categories,
+                navController
             )
         }
     )
@@ -76,7 +111,8 @@ private fun NewsMainScreenContent(
 @Composable
 private fun LoadingContent(
     modifier: Modifier,
-    categories: List<String>
+    categories: List<String>,
+    navController: NavController
 ) {
     Column(
         modifier = modifier
@@ -102,7 +138,7 @@ private fun LoadingContent(
             cells = GridCells.Adaptive(128.dp)
         ) {
             items(categories) { category ->
-                CategoryItem(category, { })
+                CategoryItem(category, { navController.navigate(Screen.Article.createRoute(category)) })
             }
         }
     }
@@ -129,7 +165,8 @@ fun MainScreenPreview() {
     NewsTheme {
         NewsMainScreenContent(
             categories = listOf("Politica", "Sport", "Natura"),
-            scaffoldState = rememberScaffoldState()
+            scaffoldState = rememberScaffoldState(),
+            navController = rememberNavController()
         )
     }
 }

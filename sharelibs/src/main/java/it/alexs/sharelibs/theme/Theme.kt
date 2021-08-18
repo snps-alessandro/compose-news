@@ -1,4 +1,4 @@
-package it.alexs.composenews.ui.theme
+package it.alexs.sharelibs.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

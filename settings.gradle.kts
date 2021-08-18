@@ -21,3 +21,4 @@ refreshVersions {
 rootProject.name = "Compose News"
 include(":app")
 include(":sharelibs")
+include(":article")

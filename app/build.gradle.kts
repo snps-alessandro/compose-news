@@ -85,6 +85,7 @@ dependencies {
     implementation(kotlin("stdlib-jdk8"))
 
     implementation(project(":sharelibs"))
+    implementation(project(":article"))
     // AndroidX
     implementation(Libs.appcompat)
     implementation(Libs.ui)
@@ -95,9 +96,11 @@ dependencies {
     implementation(Libs.material_icons_core)
     implementation(Libs.activity_compose)
     implementation(Libs.lifecycle_viewmodel_compose)
+    implementation(Libs.navigation_compose)
     implementation(Libs.runtime_livedata)
     implementation(Libs.ui_test_junit4)
     implementation(Libs.camera_camera2)
+    implementation(Libs.hilt_navigation_compose)
 
     // Google
     implementation(Libs.com_google_android_material_material)

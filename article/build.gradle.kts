@@ -3,7 +3,6 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
-    id("kotlin-parcelize")
 }
 
 android {
@@ -20,6 +19,7 @@ android {
     }
 
     buildFeatures {
+        viewBinding = true
         compose = true
     }
 
@@ -37,25 +37,20 @@ android {
 dependencies {
 
     implementation(kotlin("stdlib-jdk8"))
+    implementation(project(":sharelibs"))
     // AndroidX
-    implementation(Libs.ui)
     implementation(Libs.ui)
     implementation(Libs.ui_tooling)
     implementation(Libs.foundation)
     implementation(Libs.androidx_compose_material_material)
-    implementation(Libs.navigation_compose)
     implementation(Libs.material_icons_extended)
     implementation(Libs.material_icons_core)
+    implementation(Libs.activity_compose)
+    implementation(Libs.lifecycle_viewmodel_compose)
+    implementation(Libs.navigation_compose)
+    implementation(Libs.runtime_livedata)
     implementation(Libs.hilt_navigation_compose)
 
-    // SquareUP
-    implementation(Libs.retrofit)
-    implementation(Libs.converter_gson)
-    implementation(Libs.okhttp)
-    implementation(Libs.logging_interceptor)
-
-    // Google
-    implementation(Libs.gson)
     implementation(Libs.hilt_android)
     kapt(Libs.hilt_android_compiler)
 }

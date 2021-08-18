@@ -29,9 +29,23 @@ object Libs {
     const val material_icons_extended: String =
             "androidx.compose.material:material-icons-extended:_"
 
+    const val navigation_compose: String = "androidx.navigation:navigation-compose:_"
+
     const val activity_compose: String = "androidx.activity:activity-compose:_"
 
+    const val retrofit: String = "com.squareup.retrofit2:retrofit:_"
+
+    const val converter_gson: String = "com.squareup.retrofit2:converter-gson:_"
+
+    const val okhttp: String = "com.squareup.okhttp3:okhttp:_"
+
+    const val logging_interceptor: String = "com.squareup.okhttp3:logging-interceptor:_"
+
+    const val gson: String = "com.google.code.gson:gson:_"
+
     const val lifecycle_viewmodel_compose = "androidx.lifecycle:lifecycle-viewmodel-compose:_"
+
+    const val hilt_navigation_compose: String = "androidx.hilt:hilt-navigation-compose:_"
 
     const val runtime_livedata: String = "androidx.compose.runtime:runtime-livedata:_"
 
