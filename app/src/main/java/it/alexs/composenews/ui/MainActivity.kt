@@ -3,7 +3,6 @@ package it.alexs.composenews.ui
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -31,13 +30,12 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import it.alexs.article.ui.ArticleScreen
 import it.alexs.composenews.R
-import it.alexs.sharelibs.theme.NewsTheme
 import it.alexs.composenews.ui.utils.NewsToolbar
 import it.alexs.sharelibs.Screen
+import it.alexs.sharelibs.theme.NewsTheme
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-
 
     @ExperimentalFoundationApi
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,7 +136,9 @@ private fun LoadingContent(
             cells = GridCells.Adaptive(128.dp)
         ) {
             items(categories) { category ->
-                CategoryItem(category, { navController.navigate(Screen.Article.createRoute(category)) })
+                CategoryItem(
+                    category,
+                    { navController.navigate(Screen.Article.createRoute(category)) })
             }
         }
     }

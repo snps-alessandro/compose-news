@@ -1,25 +1,26 @@
 package it.alexs.article.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronLeft
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -105,25 +106,38 @@ fun ArticleView(articles: WrapperArticle?, modifier: Modifier) {
 
 @Composable
 fun CardArticle(article: Article, modifier: Modifier) {
-    Column(modifier.padding(8.dp)) {
-        Text(text = "Soruce: ${article.source?.name ?: "unknow"}")
-        Text(text = "Author: ${article.author ?: "unknow"}")
-        Divider()
-        Text(text = article.title ?: "No Title", style = typography.h3)
-        Text(text = article.description ?: "No description", style = typography.overline)
-        Text(
-            text = article.content ?: "No content",
-            style = typography.body1,
-            modifier = modifier.padding(top = 16.dp)
-        )
+    Column(modifier = modifier.fillMaxWidth()) {
+        Card(elevation = 4.dp, modifier = modifier.padding(8.dp)) {
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            ) {
+                Text(text = article.title ?: "No Title", style = typography.h2)
+                Text(text = article.description ?: "No description", style = typography.overline)
+                Spacer(modifier = modifier.padding(8.dp))
+                Text(text = "Soruce: ${article.source?.name ?: "unknow"}")
+                Text(text = "Author: ${article.author ?: "unknow"}")
+                Spacer(modifier = modifier.padding(8.dp))
+                Text(
+                    text = article.content ?: "No content",
+                    style = typography.body1
+                )
+            }
+        }
     }
 }
 
 @Composable
 fun LoadingContent(modifier: Modifier) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
         CircularProgressIndicator()
-        Spacer(modifier = modifier.requiredHeight(8.dp))
     }
 }
 
@@ -136,16 +150,33 @@ fun ErrorContent(exception: Throwable?, scaffoldState: ScaffoldState) {
     }
 }
 
+/*@Preview
+@Composable
+fun LoadingPreview() {
+    NewsTheme {
+        Scaffold(
+            topBar = { TopAppBar(title = { Text(text = "News") }) },
+            content = { innerPadding ->
+                LoadingContent(modifier = Modifier)
+            })
+    }
+}*/
+
 @Preview
 @Composable
 fun ArticlePreview() {
     NewsTheme {
-        CardArticle(
-            article = Article(
-                source = Source(name = "CNN"),
-                author = "Bob",
-                title = "Jannik Sinner best player of 2021"
-            ), modifier = Modifier
-        )
+        Scaffold(
+            topBar = { TopAppBar(title = { Text(text = "News") }) },
+            content = { innerPadding ->
+                CardArticle(
+                    article = Article(
+                        source = Source(name = "CNN"),
+                        author = "Bob",
+                        title = "Jannik Sinner best player of 2021"
+                    ), modifier = Modifier.padding(innerPadding)
+                )
+            })
+
     }
 }
