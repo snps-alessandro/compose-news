@@ -2,26 +2,25 @@
 
 package it.alexs.sharelibs.utils.state
 
-import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.CoroutineScope
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
+import androidx.compose.runtime.produceState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.launch
 
-class State<out T> internal constructor(val value: Any?) {
+class StateUI<out T> internal constructor(val value: Any?) {
 
     companion object {
-        fun <T> success(value: T?): State<T> = State(value)
+        fun <T> success(value: T?): StateUI<T> = StateUI(value)
 
-        fun <T> failure(exception: Throwable): State<T> =
-            State(createFailure(exception))
+        fun <T> failure(exception: Throwable): StateUI<T> =
+            StateUI(createFailure(exception))
 
-        fun <T> loading(): State<T> = State(null)
+        fun <T> loading(): StateUI<T> = StateUI(null)
 
-        fun <T> completed(): State<T> = State(createComplete())
+        fun <T> completed(): StateUI<T> = StateUI(createComplete())
     }
 
     val isSuccess: Boolean get() = value !is Failure && value !is Complete && !isLoading
@@ -56,21 +55,23 @@ class State<out T> internal constructor(val value: Any?) {
     }
 }
 
-internal fun createFailure(exception: Throwable): Any = State.Failure(exception)
+internal fun createFailure(exception: Throwable): Any = StateUI.Failure(exception)
 
-internal fun createComplete(): Any = State.Complete(true)
+internal fun createComplete(): Any = StateUI.Complete(true)
 
-fun <Producer, T> produceState(
+
+@Composable
+fun <Producer, T> produceUiState(
     producer: Producer,
-    coroutineScope: CoroutineScope,
-    liveData: MutableLiveData<State<T>>,
-    block: suspend Producer.() -> Flow<T?>
-) {
-    coroutineScope.launch {
+    key: Any?,
+    block: suspend Producer.() -> Flow<T>
+): State<StateUI<T>> {
+
+    return produceState(initialValue = StateUI.loading(), key, producer) {
+
         producer.block()
-            .catch { e -> liveData.value = State.failure<T>(e) }
-            .onStart { liveData.value = State.loading<T>() }
-            .onCompletion { liveData.value = State.completed<T>() }
-            .collectLatest { liveData.value = State.success(it) }
+            .catch { e -> value = StateUI.failure(e) }
+            .onStart { value = StateUI.loading() }
+            .collectLatest { value = StateUI.success(it) }
     }
 }

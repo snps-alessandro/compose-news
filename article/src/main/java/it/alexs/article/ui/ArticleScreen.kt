@@ -19,12 +19,12 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import it.alexs.composenews.ui.utils.NewsToolbar
 import it.alexs.sharelibs.model.Article
@@ -32,7 +32,8 @@ import it.alexs.sharelibs.model.Source
 import it.alexs.sharelibs.model.WrapperArticle
 import it.alexs.sharelibs.theme.NewsTheme
 import it.alexs.sharelibs.theme.typography
-import it.alexs.sharelibs.utils.state.State
+import it.alexs.sharelibs.utils.state.StateUI
+import it.alexs.sharelibs.utils.state.produceUiState
 
 @Composable
 fun ArticleScreen(
@@ -42,9 +43,12 @@ fun ArticleScreen(
     category: String
 ) {
 
-    val articles = articleViewModel.articles.collectAsState()
-
-    articleViewModel.topHeadlinesFromCategory(category)
+    val articles = produceUiState(
+        producer = articleViewModel,
+        key = category
+    ) {
+        topHeadlinesFromCategory(category = category)
+    }
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -70,7 +74,7 @@ fun ArticleScreen(
 
 @Composable
 fun ArticleContent(
-    articles: State<WrapperArticle>,
+    articles: StateUI<WrapperArticle>,
     modifier: Modifier = Modifier,
     scaffoldState: ScaffoldState
 ) {
