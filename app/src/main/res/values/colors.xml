@@ -1,10 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!--?xml version="1.0" encoding="UTF-8"?-->
 <resources>
-    <color name="blue_400">#76BED0</color>
-    <color name="blue_100">#a8f1ff</color>
-    <color name="blue_700">#448e9f</color>
-    <color name="black_800">#4E4B5C</color>
-    <color name="black_600">#7a7789</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="primaryColor">#254554</color>
+    <color name="primaryLightColor">#517080</color>
+    <color name="primaryDarkColor">#001e2b</color>
+    <color name="secondaryColor">#64cfbf</color>
+    <color name="secondaryLightColor">#98fff2</color>
+    <color name="secondaryDarkColor">#2a9d8f</color>
+    <color name="primaryTextColor">#ffffff</color>
+    <color name="secondaryTextColor">#000000</color>
 </resources>

@@ -15,11 +15,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.material.Text
+import androidx.compose.material.contentColorFor
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -94,6 +98,7 @@ fun NewsMainScreen(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @ExperimentalFoundationApi
 @Composable
 private fun NewsMainScreenContent(
@@ -116,6 +121,7 @@ private fun NewsMainScreenContent(
     )
 }
 
+@ExperimentalMaterialApi
 @ExperimentalFoundationApi
 @Composable
 private fun LoadingContent(
@@ -144,7 +150,7 @@ private fun LoadingContent(
 
         LazyColumn(
             state = listState,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(categories) { category ->
                 CategoryItem(
@@ -155,6 +161,7 @@ private fun LoadingContent(
     }
 }
 
+@ExperimentalMaterialApi
 @Composable
 fun CategoryItem(
     category: CategoryNews,
@@ -162,10 +169,10 @@ fun CategoryItem(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
+        modifier = modifier.padding(4.dp)
             .clickable { onClick() },
-        elevation = 0.dp
+        backgroundColor = MaterialTheme.colors.secondary,
+        contentColor = contentColorFor(backgroundColor = backgroundColor)
     ) {
         Row {
             Image(
@@ -174,8 +181,10 @@ fun CategoryItem(
                 contentScale = ContentScale.Crop,
                 modifier = modifier
                     .size(64.dp)
-                    .clip(CircleShape)
+                    .clip(RoundedCornerShape(8.dp))
+                    .padding(8.dp)
             )
+
             Text(
                 text = category.name,
                 modifier = modifier

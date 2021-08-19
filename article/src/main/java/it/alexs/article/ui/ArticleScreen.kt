@@ -53,6 +53,7 @@ import it.alexs.sharelibs.model.WrapperArticle
 import it.alexs.sharelibs.theme.NewsTheme
 import it.alexs.sharelibs.theme.typography
 import it.alexs.sharelibs.utils.NewsToolbar
+import it.alexs.sharelibs.utils.orPlaceholder
 import it.alexs.sharelibs.utils.state.UiState
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
@@ -200,18 +201,18 @@ fun CardArticle(article: Article, modifier: Modifier, placeholder: Modifier) {
                 ),
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
-                modifier = modifier.size(width = 330.dp, height = 124.dp)
+                modifier = placeholder
+                    .padding(bottom = 4.dp)
+                    .size(width = 330.dp, height = 124.dp)
             )
             Text(
-                text = article.title ?: "No Title",
-                style = typography.h2,
-                modifier = placeholder,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1
+                text = article.title.orPlaceholder(),
+                style = typography.h3,
+                modifier = placeholder
             )
             Spacer(modifier = modifier.padding(1.dp))
             Text(
-                text = article.description ?: "No description",
+                text = article.description.orPlaceholder(),
                 style = typography.overline,
                 modifier = placeholder
             )
@@ -224,19 +225,21 @@ fun CardArticle(article: Article, modifier: Modifier, placeholder: Modifier) {
             )
             Spacer(modifier = modifier.padding(8.dp))
             Text(
-                text = "Source: ${article.source?.name ?: "unknow"}",
+                text = article.source?.name.orPlaceholder("Source"),
                 modifier = placeholder
             )
             Spacer(modifier = modifier.padding(2.dp))
             Text(
-                text = "Author: ${article.author ?: "unknow"}",
+                text = article.author.orPlaceholder("Author"),
                 modifier = placeholder
             )
             Spacer(modifier = modifier.padding(8.dp))
             Text(
-                text = article.content ?: "No content",
+                text = article.content.orPlaceholder(),
                 style = typography.body1,
-                modifier = placeholder
+                modifier = placeholder,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 4
             )
         }
     }
@@ -277,10 +280,11 @@ fun ArticlePreview() {
                     articles = listOf(
                         Article(
                             source = Source(name = "CNN"),
-                            author = "Bob",
                             title = "Jannik Sinner best player of 2021",
                             urlToImage = "https://net-storage.tcccdn.com/storage/tuttojuve.com/img_notizie/thumb3/c8/c8ea7e78ccb06f501010c6db5313533b-52248-8087c39faad72121becb6d1778778c8e.jpeg",
-                            publishedAt = "2021-08-18T10:10:34Z"
+                            publishedAt = "2021-08-18T10:10:34Z",
+                            content = "Test content",
+                            description = "Test description"
                         ),
                         Article(
                             source = Source(name = "CNN"),
