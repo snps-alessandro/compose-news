@@ -53,11 +53,15 @@ object Libs {
 
     const val accompanist_swiperefresh: String = "com.google.accompanist:accompanist-swiperefresh:_"
 
+    const val coil_compose: String = "io.coil-kt:coil-compose:_"
+
     const val runtime_livedata: String = "androidx.compose.runtime:runtime-livedata:_"
 
     const val ui: String = "androidx.compose.ui:ui:_"
 
     const val ui_test_junit4: String = "androidx.compose.ui:ui-test-junit4:_"
+
+    const val joda_time: String = "joda-time:joda-time:_"
 
     const val ui_tooling: String = "androidx.compose.ui:ui-tooling:_"
 

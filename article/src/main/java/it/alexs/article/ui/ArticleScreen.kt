@@ -1,14 +1,18 @@
 package it.alexs.article.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -27,16 +31,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
+import coil.size.Scale
+import coil.transform.RoundedCornersTransformation
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import it.alexs.article.R
 import it.alexs.sharelibs.model.Article
 import it.alexs.sharelibs.model.Source
 import it.alexs.sharelibs.model.WrapperArticle
@@ -44,6 +54,8 @@ import it.alexs.sharelibs.theme.NewsTheme
 import it.alexs.sharelibs.theme.typography
 import it.alexs.sharelibs.utils.NewsToolbar
 import it.alexs.sharelibs.utils.state.UiState
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormat
 
 @Composable
 fun ArticleScreen(
@@ -88,7 +100,7 @@ fun ArticleContent(
 ) {
 
     if (articles.isFailure) {
-        ErrorContent(scaffoldState = scaffoldState, onRefresh = onRefresh)
+        ErrorContent(scaffoldState = scaffoldState)
     }
 
     LoadingContent(
@@ -134,8 +146,9 @@ fun ArticleView(
     placeHolder: Boolean,
     onRefresh: () -> Unit
 ) {
+    val articleToShow = articles.data?.articles ?: listOf()
     if (articles.data != null) {
-        NewsList(modifier = modifier, articles = articles, placeHolder = placeHolder)
+        NewsList(modifier = modifier, articles = articleToShow, placeholder = placeHolder)
     } else if (!articles.isFailure) {
         TextButton(onClick = onRefresh, modifier = modifier.fillMaxSize()) {
             Text(text = "Tap to load content", textAlign = TextAlign.Center)
@@ -145,17 +158,21 @@ fun ArticleView(
 
 @Composable
 private fun NewsList(
-    articles: UiState<WrapperArticle>,
-    placeHolder: Boolean,
+    articles: List<Article>,
+    placeholder: Boolean,
     modifier: Modifier
 ) {
-    LazyColumn {
-        items(articles.data?.articles ?: listOf()) { article ->
+    LazyColumn(
+        state = rememberLazyListState(),
+        contentPadding = PaddingValues(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(articles) { article ->
             CardArticle(
                 article = article,
                 modifier = modifier,
                 placeholder = modifier.placeholder(
-                    visible = placeHolder,
+                    visible = placeholder,
                     highlight = PlaceholderHighlight.shimmer()
                 )
             )
@@ -165,40 +182,62 @@ private fun NewsList(
 
 @Composable
 fun CardArticle(article: Article, modifier: Modifier, placeholder: Modifier) {
-    Column(modifier = modifier.fillMaxWidth()) {
-        Card(elevation = 4.dp, modifier = modifier.padding(8.dp)) {
-            Column(
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-            ) {
-                Text(
-                    text = article.title ?: "No Title",
-                    style = typography.h2,
-                    modifier = placeholder
-                )
-                Text(
-                    text = article.description ?: "No description",
-                    style = typography.overline,
-                    modifier = placeholder
-                )
-                Spacer(modifier = modifier.padding(8.dp))
-                Text(
-                    text = "Soruce: ${article.source?.name ?: "unknow"}",
-                    modifier = placeholder
-                )
-                Spacer(modifier = modifier.padding(4.dp))
-                Text(
-                    text = "Author: ${article.author ?: "unknow"}",
-                    modifier = placeholder
-                )
-                Spacer(modifier = modifier.padding(8.dp))
-                Text(
-                    text = article.content ?: "No content",
-                    style = typography.body1,
-                    modifier = placeholder
-                )
-            }
+    Card(elevation = 4.dp) {
+        Column(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Image(
+                painter = rememberImagePainter(
+                    data = article.urlToImage,
+                    builder = {
+                        transformations(RoundedCornersTransformation(8f))
+                        crossfade(true)
+                        placeholder(R.drawable.ic_baseline_photo_24)
+                        scale(Scale.FILL)
+                    },
+                ),
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+                modifier = modifier.size(width = 330.dp, height = 124.dp)
+            )
+            Text(
+                text = article.title ?: "No Title",
+                style = typography.h2,
+                modifier = placeholder,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
+            Spacer(modifier = modifier.padding(1.dp))
+            Text(
+                text = article.description ?: "No description",
+                style = typography.overline,
+                modifier = placeholder
+            )
+            Spacer(modifier = modifier.padding(1.dp))
+            Text(
+                text = DateTime.parse(article.publishedAt)
+                    .toString(DateTimeFormat.forPattern("dd/MM/YYYY HH:mm")),
+                style = typography.overline,
+                modifier = placeholder
+            )
+            Spacer(modifier = modifier.padding(8.dp))
+            Text(
+                text = "Source: ${article.source?.name ?: "unknow"}",
+                modifier = placeholder
+            )
+            Spacer(modifier = modifier.padding(2.dp))
+            Text(
+                text = "Author: ${article.author ?: "unknow"}",
+                modifier = placeholder
+            )
+            Spacer(modifier = modifier.padding(8.dp))
+            Text(
+                text = article.content ?: "No content",
+                style = typography.body1,
+                modifier = placeholder
+            )
         }
     }
 }
@@ -218,8 +257,7 @@ fun FullScreenLoadingContent(modifier: Modifier) {
 
 @Composable
 fun ErrorContent(
-    scaffoldState: ScaffoldState,
-    onRefresh: () -> Unit
+    scaffoldState: ScaffoldState
 ) {
     LaunchedEffect(scaffoldState) {
         val snackResult = scaffoldState.snackbarHostState.showSnackbar(
@@ -235,17 +273,25 @@ fun ArticlePreview() {
         Scaffold(
             topBar = { TopAppBar(title = { Text(text = "News") }) },
             content = { innerPadding ->
-                CardArticle(
-                    article = Article(
-                        source = Source(name = "CNN"),
-                        author = "Bob",
-                        title = "Jannik Sinner best player of 2021"
+                NewsList(
+                    articles = listOf(
+                        Article(
+                            source = Source(name = "CNN"),
+                            author = "Bob",
+                            title = "Jannik Sinner best player of 2021",
+                            urlToImage = "https://net-storage.tcccdn.com/storage/tuttojuve.com/img_notizie/thumb3/c8/c8ea7e78ccb06f501010c6db5313533b-52248-8087c39faad72121becb6d1778778c8e.jpeg",
+                            publishedAt = "2021-08-18T10:10:34Z"
+                        ),
+                        Article(
+                            source = Source(name = "CNN"),
+                            author = "Bob",
+                            title = "Jannik Sinner best player of 2021",
+                            urlToImage = "https://net-storage.tcccdn.com/storage/tuttojuve.com/img_notizie/thumb3/c8/c8ea7e78ccb06f501010c6db5313533b-52248-8087c39faad72121becb6d1778778c8e.jpeg",
+                            publishedAt = "2021-08-18T10:10:34Z"
+                        )
                     ),
                     modifier = Modifier.padding(innerPadding),
-                    placeholder = Modifier.placeholder(
-                        visible = true,
-                        highlight = PlaceholderHighlight.shimmer()
-                    )
+                    placeholder = false
                 )
             })
 

@@ -52,6 +52,8 @@ dependencies {
     implementation(Libs.hilt_navigation_compose)
     implementation(Libs.accompanist_placeholder)
     implementation(Libs.accompanist_swiperefresh)
+    implementation(Libs.coil_compose)
+    implementation(Libs.joda_time)
 
     implementation(Libs.hilt_android)
     kapt(Libs.hilt_android_compiler)
