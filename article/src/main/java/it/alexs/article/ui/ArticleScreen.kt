@@ -1,7 +1,9 @@
 package it.alexs.article.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +19,8 @@ import androidx.compose.material.Card
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
@@ -31,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -68,6 +73,7 @@ fun ArticleScreen(
 
     val articles by articleViewModel.articles.observeAsState(UiState(loading = true))
 
+    val filter by articleViewModel.filter.observeAsState(initial = "")
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -84,6 +90,8 @@ fun ArticleScreen(
         content = { innerPadding ->
             ArticleContent(
                 articles = articles,
+                filter = filter,
+                onFilterChange = { articleViewModel.onTextChange(it) },
                 modifier = Modifier.padding(innerPadding),
                 scaffoldState = scaffoldState,
                 onRefresh = { articleViewModel.topHeadlinesFromCategory(category = category) }
@@ -95,6 +103,8 @@ fun ArticleScreen(
 @Composable
 fun ArticleContent(
     articles: UiState<WrapperArticle>,
+    filter: String,
+    onFilterChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     scaffoldState: ScaffoldState,
     onRefresh: () -> Unit
@@ -109,12 +119,14 @@ fun ArticleContent(
         emptyContent = { FullScreenLoadingContent(modifier = modifier) },
         loading = articles.loading,
         onRefresh = onRefresh,
+        filter = filter,
+        onFilterChange = onFilterChange,
         content = {
             ArticleView(
                 articles = articles,
                 modifier = modifier,
-                onRefresh = onRefresh,
-                placeHolder = articles.loading
+                placeHolder = articles.loading,
+                onRefresh = onRefresh
             )
         }
     )
@@ -126,17 +138,31 @@ fun LoadingContent(
     emptyContent: @Composable () -> Unit,
     loading: Boolean,
     onRefresh: () -> Unit,
+    filter: String,
+    onFilterChange: (String) -> Unit,
     content: @Composable () -> Unit
 ) {
 
     if (empty) {
         emptyContent()
     } else {
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = loading),
-            onRefresh = onRefresh,
-            content = content
-        )
+        Column {
+            OutlinedTextField(
+                value = filter,
+                onValueChange = onFilterChange,
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colors.surface),
+                placeholder = { Text(text = "Cerca...") }
+            )
+
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(isRefreshing = loading),
+                onRefresh = onRefresh,
+                content = content
+            )
+        }
     }
 }
 
@@ -147,9 +173,14 @@ fun ArticleView(
     placeHolder: Boolean,
     onRefresh: () -> Unit
 ) {
-    val articleToShow = articles.data?.articles ?: listOf()
+    val articleList = articles.data?.articles ?: listOf()
+
     if (articles.data != null) {
-        NewsList(modifier = modifier, articles = articleToShow, placeholder = placeHolder)
+        ArticleList(
+            modifier = modifier,
+            articles = articleList,
+            placeholder = placeHolder
+        )
     } else if (!articles.isFailure) {
         TextButton(onClick = onRefresh, modifier = modifier.fillMaxSize()) {
             Text(text = "Tap to load content", textAlign = TextAlign.Center)
@@ -158,7 +189,7 @@ fun ArticleView(
 }
 
 @Composable
-private fun NewsList(
+private fun ArticleList(
     articles: List<Article>,
     placeholder: Boolean,
     modifier: Modifier
@@ -276,7 +307,7 @@ fun ArticlePreview() {
         Scaffold(
             topBar = { TopAppBar(title = { Text(text = "News") }) },
             content = { innerPadding ->
-                NewsList(
+                ArticleList(
                     articles = listOf(
                         Article(
                             source = Source(name = "CNN"),
@@ -298,6 +329,35 @@ fun ArticlePreview() {
                     placeholder = false
                 )
             })
+
+    }
+}
+
+@Preview
+@Composable
+fun TextFieldPreview() {
+    NewsTheme {
+        Scaffold(
+            topBar = { TopAppBar(title = { Text(text = "TextField") }) },
+            content = { innerPadding ->
+                Box(modifier = Modifier.padding(innerPadding)) {
+                    Spacer(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .background(Color.Gray)
+                    )
+                    OutlinedTextField(
+                        value = "ciao",
+                        onValueChange = { },
+                        modifier = Modifier
+                            .padding(innerPadding)
+                            .background(MaterialTheme.colors.surface)
+                            .padding(12.dp)
+                            .fillMaxWidth()
+                    )
+                }
+            }
+        )
 
     }
 }
