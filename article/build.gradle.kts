@@ -50,6 +50,8 @@ dependencies {
     implementation(Libs.navigation_compose)
     implementation(Libs.runtime_livedata)
     implementation(Libs.hilt_navigation_compose)
+    implementation(Libs.accompanist_placeholder)
+    implementation(Libs.accompanist_swiperefresh)
 
     implementation(Libs.hilt_android)
     kapt(Libs.hilt_android_compiler)

@@ -101,6 +101,7 @@ dependencies {
     implementation(Libs.ui_test_junit4)
     implementation(Libs.camera_camera2)
     implementation(Libs.hilt_navigation_compose)
+    implementation(Libs.accompanist_navigation_animation)
 
     // Google
     implementation(Libs.com_google_android_material_material)

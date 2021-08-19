@@ -47,6 +47,12 @@ object Libs {
 
     const val hilt_navigation_compose: String = "androidx.hilt:hilt-navigation-compose:_"
 
+    const val accompanist_navigation_animation: String = "com.google.accompanist:accompanist-navigation-animation:_"
+
+    const val accompanist_placeholder: String = "com.google.accompanist:accompanist-placeholder-material:_"
+
+    const val accompanist_swiperefresh: String = "com.google.accompanist:accompanist-swiperefresh:_"
+
     const val runtime_livedata: String = "androidx.compose.runtime:runtime-livedata:_"
 
     const val ui: String = "androidx.compose.ui:ui:_"

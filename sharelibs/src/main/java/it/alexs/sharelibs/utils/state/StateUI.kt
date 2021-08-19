@@ -60,18 +60,3 @@ internal fun createFailure(exception: Throwable): Any = StateUI.Failure(exceptio
 internal fun createComplete(): Any = StateUI.Complete(true)
 
 
-@Composable
-fun <Producer, T> produceUiState(
-    producer: Producer,
-    key: Any?,
-    block: suspend Producer.() -> Flow<T>
-): State<StateUI<T>> {
-
-    return produceState(initialValue = StateUI.loading(), key, producer) {
-
-        producer.block()
-            .catch { e -> value = StateUI.failure(e) }
-            .onStart { value = StateUI.loading() }
-            .collectLatest { value = StateUI.success(it) }
-    }
-}

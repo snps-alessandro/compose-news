@@ -4,21 +4,31 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Button
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Card
 import androidx.compose.material.Scaffold
 import androidx.compose.material.ScaffoldState
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,9 +40,10 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import it.alexs.article.ui.ArticleScreen
 import it.alexs.composenews.R
-import it.alexs.composenews.ui.utils.NewsToolbar
 import it.alexs.sharelibs.Screen
 import it.alexs.sharelibs.theme.NewsTheme
+import it.alexs.sharelibs.theme.typography
+import it.alexs.sharelibs.utils.NewsToolbar
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -74,10 +85,10 @@ fun NewsMainScreen(
     mainViewModel: MainViewModel = viewModel(),
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
-    val categoriesState = mainViewModel.categories.observeAsState(listOf())
+    val categoriesState by mainViewModel.categories.observeAsState(listOf())
 
     NewsMainScreenContent(
-        categories = categoriesState.value,
+        categories = categoriesState,
         scaffoldState = scaffoldState,
         navController = navController
     )
@@ -86,7 +97,7 @@ fun NewsMainScreen(
 @ExperimentalFoundationApi
 @Composable
 private fun NewsMainScreenContent(
-    categories: List<String>,
+    categories: List<CategoryNews>,
     modifier: Modifier = Modifier,
     scaffoldState: ScaffoldState,
     navController: NavController
@@ -109,7 +120,7 @@ private fun NewsMainScreenContent(
 @Composable
 private fun LoadingContent(
     modifier: Modifier,
-    categories: List<String>,
+    categories: List<CategoryNews>,
     navController: NavController
 ) {
     Column(
@@ -131,14 +142,14 @@ private fun LoadingContent(
 
         val listState = rememberLazyListState()
 
-        LazyVerticalGrid(
+        LazyColumn(
             state = listState,
-            cells = GridCells.Adaptive(128.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(categories) { category ->
                 CategoryItem(
                     category,
-                    { navController.navigate(Screen.Article.createRoute(category)) })
+                    { navController.navigate(Screen.Article.createRoute(category.name)) })
             }
         }
     }
@@ -146,15 +157,34 @@ private fun LoadingContent(
 
 @Composable
 fun CategoryItem(
-    category: String,
-    action: () -> Unit,
+    category: CategoryNews,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Button(
-        onClick = action,
-        modifier = modifier.padding(4.dp)
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        elevation = 0.dp
     ) {
-        Text(text = category)
+        Row {
+            Image(
+                painter = painterResource(id = category.imageAssets),
+                contentDescription = category.name,
+                contentScale = ContentScale.Crop,
+                modifier = modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+            )
+            Text(
+                text = category.name,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .align(Alignment.CenterVertically)
+                    .padding(8.dp),
+                style = typography.body1,
+            )
+        }
     }
 }
 
@@ -164,7 +194,15 @@ fun CategoryItem(
 fun MainScreenPreview() {
     NewsTheme {
         NewsMainScreenContent(
-            categories = listOf("Politica", "Sport", "Natura"),
+            categories = listOf(
+                CategoryNews("Business", R.drawable.business),
+                CategoryNews("Entertainment", R.drawable.entertainment),
+                CategoryNews("General", R.drawable.general),
+                CategoryNews("Health", R.drawable.health),
+                CategoryNews("Science", R.drawable.science),
+                CategoryNews("Sport", R.drawable.sport),
+                CategoryNews("Technology", R.drawable.technology)
+            ),
             scaffoldState = rememberScaffoldState(),
             navController = rememberNavController()
         )
