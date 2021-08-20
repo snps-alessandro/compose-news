@@ -17,7 +17,6 @@ buildscript {
         classpath(Libs.kotlin_gradle_plugin)
         classpath(Libs.google_services)
         classpath(Libs.hilt_android_gradle_plugin)
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.21")
     }
 }
 

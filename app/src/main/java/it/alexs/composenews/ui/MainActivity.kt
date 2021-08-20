@@ -37,7 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -65,7 +64,9 @@ class MainActivity : AppCompatActivity() {
                     startDestination = Screen.Home.id.route
                 ) {
                     composable(route = Screen.Home.id.route) {
-                        NewsMainScreen(navController)
+                        NewsMainScreen(navigateToArticle = {
+                            navController.navigate(Screen.Article.createRoute(it))
+                        })
                     }
 
                     composable(route = Screen.Article.id.route) { navBackStackEntry ->
@@ -85,7 +86,7 @@ class MainActivity : AppCompatActivity() {
 @ExperimentalFoundationApi
 @Composable
 fun NewsMainScreen(
-    navController: NavController,
+    navigateToArticle: (category: String) -> Unit,
     mainViewModel: MainViewModel = viewModel(),
     scaffoldState: ScaffoldState = rememberScaffoldState()
 ) {
@@ -94,7 +95,7 @@ fun NewsMainScreen(
     NewsMainScreenContent(
         categories = categoriesState,
         scaffoldState = scaffoldState,
-        navController = navController
+        navigateToArticle = navigateToArticle
     )
 }
 
@@ -105,7 +106,7 @@ private fun NewsMainScreenContent(
     categories: List<CategoryNews>,
     modifier: Modifier = Modifier,
     scaffoldState: ScaffoldState,
-    navController: NavController
+    navigateToArticle: (category: String) -> Unit
 ) {
 
     Scaffold(
@@ -115,7 +116,7 @@ private fun NewsMainScreenContent(
             LoadingContent(
                 modifier.padding(innerPadding),
                 categories,
-                navController
+                navigateToArticle
             )
         }
     )
@@ -127,7 +128,7 @@ private fun NewsMainScreenContent(
 private fun LoadingContent(
     modifier: Modifier,
     categories: List<CategoryNews>,
-    navController: NavController
+    navigateToArticle: (category: String) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -155,7 +156,7 @@ private fun LoadingContent(
             items(categories) { category ->
                 CategoryItem(
                     category,
-                    { navController.navigate(Screen.Article.createRoute(category.name)) })
+                    { navigateToArticle(category.name) })
             }
         }
     }
@@ -169,7 +170,8 @@ fun CategoryItem(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.padding(4.dp)
+        modifier = modifier
+            .padding(4.dp)
             .clickable { onClick() },
         backgroundColor = MaterialTheme.colors.secondary,
         contentColor = contentColorFor(backgroundColor = backgroundColor)
@@ -213,7 +215,7 @@ fun MainScreenPreview() {
                 CategoryNews("Technology", R.drawable.technology)
             ),
             scaffoldState = rememberScaffoldState(),
-            navController = rememberNavController()
+            navigateToArticle = {}
         )
     }
 }

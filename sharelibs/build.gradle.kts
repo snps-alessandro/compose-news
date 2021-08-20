@@ -32,13 +32,16 @@ android {
         kotlinCompilerExtensionVersion =
             de.fayard.refreshVersions.core.versionFor(AndroidX.compose.ui)
     }
+    buildTypes {
+        create("staging") {
+        }
+    }
 }
 
 dependencies {
 
     implementation(kotlin("stdlib-jdk8"))
     // AndroidX
-    implementation(Libs.ui)
     implementation(Libs.ui)
     implementation(Libs.ui_tooling)
     implementation(Libs.foundation)
@@ -47,6 +50,9 @@ dependencies {
     implementation(Libs.material_icons_extended)
     implementation(Libs.material_icons_core)
     implementation(Libs.hilt_navigation_compose)
+    implementation(Libs.espresso_core)
+    implementation(Libs.espresso_contrib)
+    implementation(Libs.ui_test_junit4)
 
     // SquareUP
     implementation(Libs.retrofit)
@@ -58,4 +64,9 @@ dependencies {
     implementation(Libs.gson)
     implementation(Libs.hilt_android)
     kapt(Libs.hilt_android_compiler)
+    implementation(Libs.hilt_android_testing)
+
+    androidTestImplementation(Libs.ui_test)
+    androidTestImplementation(Libs.ui_test_junit4)
+    debugImplementation(Libs.ui_test_manifest)
 }

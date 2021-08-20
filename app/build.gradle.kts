@@ -8,6 +8,12 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("staging") {
+        }
+        create("release") {
+        }
+    }
     compileSdk = Versions.compileSdk
     buildToolsVersion = Versions.buildTools
 
@@ -19,10 +25,12 @@ android {
 
         versionCode = Versions.versionCode
         versionName = Versions.versionName
+
+        testInstrumentationRunner = "it.alexs.composenews.HiltTestRunner"
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -30,7 +38,7 @@ android {
             )
         }
 
-        getByName("debug") {
+        debug {
             versionNameSuffix = "-debug"
             isDebuggable = true
         }
@@ -39,6 +47,7 @@ android {
             initWith(getByName("debug"))
             versionNameSuffix = "-staging"
             matchingFallbacks.add("debug")
+            isDebuggable = true
         }
     }
 
@@ -106,21 +115,24 @@ dependencies {
     // Google
     implementation(Libs.com_google_android_material_material)
     implementation(Libs.hilt_android)
+    implementation(Libs.androidx_test_runner)
     kapt(Libs.hilt_android_compiler)
 
     // Timber
     implementation(Libs.timber)
 
-    testImplementation(Libs.junit_junit)
-    testImplementation(Libs.mockito_core)
-    testImplementation(Libs.truth)
-    testImplementation(Libs.core_testing)
-    implementation(Libs.espresso_idling_resource)
-    androidTestImplementation(Libs.androidx_test_ext_junit)
+
     androidTestImplementation(Libs.androidx_test_runner)
     androidTestImplementation(Libs.androidx_test_rules)
     androidTestImplementation(Libs.espresso_core)
-    androidTestImplementation(Libs.espresso_contrib)
+    androidTestImplementation(Libs.espresso_idling_resource)
+
+    androidTestImplementation(Libs.ui_test)
+    androidTestImplementation(Libs.ui_test_junit4)
+    debugImplementation(Libs.ui_test_manifest)
+
+    androidTestImplementation(Libs.hilt_android_testing)
+    kaptAndroidTest(Libs.hilt_android_compiler)
 }
 
 kapt {

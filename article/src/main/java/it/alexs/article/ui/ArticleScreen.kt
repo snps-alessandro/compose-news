@@ -231,7 +231,7 @@ fun CardArticle(article: Article, modifier: Modifier, placeholder: Modifier) {
                     },
                 ),
                 contentScale = ContentScale.Crop,
-                contentDescription = null,
+                contentDescription = "Image of ${article.title}",
                 modifier = placeholder
                     .padding(bottom = 4.dp)
                     .size(width = 330.dp, height = 124.dp)

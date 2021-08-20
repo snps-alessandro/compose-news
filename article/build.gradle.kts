@@ -32,6 +32,14 @@ android {
         kotlinCompilerExtensionVersion =
             de.fayard.refreshVersions.core.versionFor(AndroidX.compose.ui)
     }
+    buildTypes {
+        debug {
+
+        }
+        create("staging") {
+
+        }
+    }
 }
 
 dependencies {

@@ -45,6 +45,8 @@ object Libs {
 
     const val lifecycle_viewmodel_compose = "androidx.lifecycle:lifecycle-viewmodel-compose:_"
 
+    const val ui_test_manifest: String = "androidx.compose.ui:ui-test-manifest:_"
+
     const val hilt_navigation_compose: String = "androidx.hilt:hilt-navigation-compose:_"
 
     const val accompanist_navigation_animation: String = "com.google.accompanist:accompanist-navigation-animation:_"
@@ -60,6 +62,8 @@ object Libs {
     const val ui: String = "androidx.compose.ui:ui:_"
 
     const val ui_test_junit4: String = "androidx.compose.ui:ui-test-junit4:_"
+
+    const val ui_test: String = "androidx.compose.ui:ui-test:_"
 
     const val joda_time: String = "joda-time:joda-time:_"
 
@@ -89,6 +93,8 @@ object Libs {
     const val hilt_android_gradle_plugin: String = "com.google.dagger:hilt-android-gradle-plugin:_"
 
     const val hilt_android: String = "com.google.dagger:hilt-android:_"
+
+    const val hilt_android_testing: String = "com.google.dagger:hilt-android-testing:_"
 
     const val hilt_android_compiler: String = "com.google.dagger:hilt-android-compiler:_"
 

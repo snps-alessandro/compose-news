@@ -8,11 +8,11 @@ import it.alexs.composenews.R
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+open class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _categories = MutableLiveData<List<CategoryNews>>()
-    val categories: MutableLiveData<List<CategoryNews>>
+    open val categories: MutableLiveData<List<CategoryNews>>
         get() = _categories
 
     init {
